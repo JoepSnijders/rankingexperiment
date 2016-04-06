@@ -3,7 +3,7 @@
 import { MONGODB_URL } from './app/constants';
 
 // call the packages we need
-var http           = require('http');
+var http       = require('http');
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var server     = http.createServer(app);
@@ -13,8 +13,8 @@ var io         = require('socket.io').listen(server);
 
 var mongoose   = require('mongoose');
 mongoose.connect(MONGODB_URL); // connect to our database
-
 var Lightsetting    = require('./app/models/lightsetting');
+var Vote            = require('./app/models/vote');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -23,7 +23,8 @@ app.use(bodyParser.json());
 app.use(morgan('dev')); // use morgan to log requests to the console
 
 var port = process.env.PORT || 8070;        // set our port
-var appUrl = "http://localhost:8100";
+var appUrl = "http://jsnijders.com";
+var appLocalUrl = "http://localhost:8100";
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -32,6 +33,7 @@ var router = express.Router();              // get an instance of the express Ro
 // CORS
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", appUrl);
+  res.header("Access-Control-Allow-Origin", appLocalUrl);
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header("Access-Control-Allow-Headers", "Origin, x-access-token, X-Requested-With, Content-Type, Accept");
@@ -72,13 +74,21 @@ router.route('/lightsettings/:id/upvote?')
                     res.send(err);
                 setting.upvotes = setting.upvotes - 1; // update the requests info
                 setting.calculated = setting.calculated - 1; // update the requests info
-                // save the request
+                // Save the Setting
                 setting.save(function(err) {
                     if (err)
                         res.send(err);
                     res.json({ message: 'Setting upvote removed!'});
                     io.sockets.emit('upvote-removed', { id: req.params.id });
                 });
+                // Save individual vote
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Upvote Removed";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.save();
             });
         } else {
             Lightsetting.findById(req.params.id, function(err, setting) {
@@ -93,6 +103,13 @@ router.route('/lightsettings/:id/upvote?')
                     res.json({ message: 'Setting upvoted!'});
                     io.sockets.emit('upvote', { id: req.params.id });
                 });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Upvote";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.save();
             });
         }
     });
@@ -113,6 +130,13 @@ router.route('/lightsettings/:id/downvote?')
                     res.json({ message: 'Setting downvote removed!'});
                     io.sockets.emit('downvote-removed', { id: req.params.id });
                 });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Downvote Removed";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.save();
             });
         } else {
             // Downvoted
@@ -128,6 +152,13 @@ router.route('/lightsettings/:id/downvote?')
                     res.json({ message: 'Setting downvoted!'});
                     io.sockets.emit('downvote', { id: req.params.id });
                 });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Downvote";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.save();
             });
         }
     });

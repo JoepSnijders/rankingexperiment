@@ -15,7 +15,6 @@ var LightsettingSchema   = new Schema({
       type: Number,
       default: 0
     },
-    rank: String,
     date: {
       type: Date,
       default: Date.now
