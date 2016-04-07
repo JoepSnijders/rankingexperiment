@@ -19,6 +19,11 @@ var VoteSchema   = new Schema({
       type: Number,
       default: 0
     },
+    participant: {
+      type: Number,
+      default: 9999
+    },
+    condition: String,
     postedOn: {
       type: Date,
       default: Date.now

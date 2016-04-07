@@ -1,43 +1,50 @@
 // BASE SETUP
 // =============================================================================
-import { MONGODB_URL } from './app/constants';
+import {
+    MONGODB_URL
+} from './app/constants';
 
 // call the packages we need
-var http       = require('http');
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
-var server     = http.createServer(app);
+var http = require('http');
+var express = require('express'); // call express
+var app = express(); // define our app using express
+var server = http.createServer(app);
 var bodyParser = require('body-parser');
-var morgan     = require('morgan');
-var io         = require('socket.io').listen(server);
+var morgan = require('morgan');
+var io = require('socket.io').listen(server);
 
-var mongoose   = require('mongoose');
+var mongoose = require('mongoose');
 mongoose.connect(MONGODB_URL); // connect to our database
-var Lightsetting    = require('./app/models/lightsetting');
-var Vote            = require('./app/models/vote');
+var Lightsetting = require('./app/models/lightsetting');
+var Vote = require('./app/models/vote');
+var Participant = require('./app/models/participant');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
 app.use(morgan('dev')); // use morgan to log requests to the console
 
-var port = process.env.PORT || 8070;        // set our port
-var appUrl = "http://jsnijders.com";
-var appLocalUrl = "http://localhost:8100";
+var port = process.env.PORT || 8070; // set our port
+
 
 // ROUTES FOR OUR API
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
+var router = express.Router(); // get an instance of the express Router
 
 // CORS
 app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", appUrl);
-  res.header("Access-Control-Allow-Origin", appLocalUrl);
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header("Access-Control-Allow-Headers", "Origin, x-access-token, X-Requested-With, Content-Type, Accept");
-  next();
+    var allowedOrigins = ['http://jsnijders.com', 'http://www.jsnijders.com', 'http://localhost:8100'];
+    var origin = req.headers.origin;
+    if (allowedOrigins.indexOf(origin) > -1) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header("Access-Control-Allow-Headers", "Origin, x-access-token, X-Requested-With, Content-Type, Accept");
+    next();
 });
 
 // middleware to use for all requests
@@ -48,22 +55,26 @@ router.use(function(req, res, next) {
 
 // get all the requests (accessed at GET http://localhost:8080/api/requests)
 router.route('/lightsettings?')
-    .get(function(req, res){
-        Lightsetting.find().sort({ calculated : -1}).exec(function(err, requests) {
+    .get(function(req, res) {
+        Lightsetting.find().sort({
+            calculated: -1
+        }).exec(function(err, requests) {
             if (err)
                 res.send(err);
             res.json(requests);
             console.log('Performed GET ALL');
         });
     })
-    .post(function(req, res){
-      var lighsetting = new Lightsetting();
-      lighsetting.color = req.query.color;
-      lighsetting.save(function(err) {
-          if (err)
-              res.send(err);
-          res.json({ message: 'Setting created!' });
-      });
+    .post(function(req, res) {
+        var lighsetting = new Lightsetting();
+        lighsetting.color = req.query.color;
+        lighsetting.save(function(err) {
+            if (err)
+                res.send(err);
+            res.json({
+                message: 'Setting created!'
+            });
+        });
     });
 router.route('/lightsettings/:id/upvote?')
     .post(function(req, res) {
@@ -78,8 +89,12 @@ router.route('/lightsettings/:id/upvote?')
                 setting.save(function(err) {
                     if (err)
                         res.send(err);
-                    res.json({ message: 'Setting upvote removed!'});
-                    io.sockets.emit('upvote-removed', { id: req.params.id });
+                    res.json({
+                        message: 'Setting upvote removed!'
+                    });
+                    io.sockets.emit('upvote-removed', {
+                        id: req.params.id
+                    });
                 });
                 // Save individual vote
                 var vote = new Vote();
@@ -88,6 +103,8 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentUpvotes = setting.upvotes;
                 vote.currentDownvotes = setting.downvotes;
                 vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
                 vote.save();
             });
         } else {
@@ -100,8 +117,12 @@ router.route('/lightsettings/:id/upvote?')
                 setting.save(function(err) {
                     if (err)
                         res.send(err);
-                    res.json({ message: 'Setting upvoted!'});
-                    io.sockets.emit('upvote', { id: req.params.id });
+                    res.json({
+                        message: 'Setting upvoted!'
+                    });
+                    io.sockets.emit('upvote', {
+                        id: req.params.id
+                    });
                 });
                 var vote = new Vote();
                 vote.lightSetting = setting._id;
@@ -109,6 +130,8 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentUpvotes = setting.upvotes;
                 vote.currentDownvotes = setting.downvotes;
                 vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
                 vote.save();
             });
         }
@@ -127,8 +150,12 @@ router.route('/lightsettings/:id/downvote?')
                 setting.save(function(err) {
                     if (err)
                         res.send(err);
-                    res.json({ message: 'Setting downvote removed!'});
-                    io.sockets.emit('downvote-removed', { id: req.params.id });
+                    res.json({
+                        message: 'Setting downvote removed!'
+                    });
+                    io.sockets.emit('downvote-removed', {
+                        id: req.params.id
+                    });
                 });
                 var vote = new Vote();
                 vote.lightSetting = setting._id;
@@ -136,6 +163,8 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentUpvotes = setting.upvotes;
                 vote.currentDownvotes = setting.downvotes;
                 vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
                 vote.save();
             });
         } else {
@@ -149,8 +178,12 @@ router.route('/lightsettings/:id/downvote?')
                 setting.save(function(err) {
                     if (err)
                         res.send(err);
-                    res.json({ message: 'Setting downvoted!'});
-                    io.sockets.emit('downvote', { id: req.params.id });
+                    res.json({
+                        message: 'Setting downvoted!'
+                    });
+                    io.sockets.emit('downvote', {
+                        id: req.params.id
+                    });
                 });
                 var vote = new Vote();
                 vote.lightSetting = setting._id;
@@ -158,6 +191,8 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentUpvotes = setting.upvotes;
                 vote.currentDownvotes = setting.downvotes;
                 vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
                 vote.save();
             });
         }
@@ -168,12 +203,29 @@ router.route('/lightsettings/:id/downvote?')
 app.use('/api', router);
 
 // SOCKET
-io.on('connection', function (socket) {
-    console.log('Socket Connected!');
-    // socket.on('my other event', function (data) {
-    //     console.log(data);
-    // });
+var socketCounter = 0;
+io.on('connection', function(socket) {
+    console.log('Socket Connected');
+    socketCounter++;
+    console.log('Connected users: ' + socketCounter);
+    // Generate PP ID
+    Participant.findOne({}, {}, { sort: { 'connectedOn' : -1 } }, function(err, post) {
+        var participant = new Participant();
+        participant.participant = post.participant + 1;
+        participant.save();
+        io.sockets.emit('participant', {
+            id: participant.participant,
+            condition: participant.condition
+        });
+    });
+
+    socket.on('disconnect', function() {
+        socketCounter--;
+        console.log('Socket Disconnected');
+        console.log('Connected users: ' + socketCounter);
+    });
 });
+
 
 // START THE SERVER
 // =============================================================================
