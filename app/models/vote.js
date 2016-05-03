@@ -27,7 +27,8 @@ var VoteSchema   = new Schema({
     postedOn: {
       type: Date,
       default: Date.now
-    }
+    },
+    rank: Number
 });
 
 module.exports = mongoose.model('Vote', VoteSchema);

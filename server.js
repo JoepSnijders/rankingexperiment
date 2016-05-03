@@ -1,8 +1,6 @@
 // BASE SETUP
 // =============================================================================
-import {
-    MONGODB_URL
-} from './app/constants';
+import { MONGODB_URL } from './app/constants';
 
 // call the packages we need
 var http = require('http');
@@ -14,10 +12,10 @@ var morgan = require('morgan');
 var io = require('socket.io').listen(server);
 
 var mongoose = require('mongoose');
-mongoose.connect(MONGODB_URL); // connect to our database
 var Lightsetting = require('./app/models/lightsetting');
 var Vote = require('./app/models/vote');
 var Participant = require('./app/models/participant');
+mongoose.connect(MONGODB_URL); // connect to our database
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -105,6 +103,7 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.rank = req.body.rank;
                 vote.save();
             });
         } else {
@@ -132,6 +131,7 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.rank = req.body.rank;
                 vote.save();
             });
         }
@@ -165,6 +165,7 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.rank = req.body.rank;
                 vote.save();
             });
         } else {
@@ -193,6 +194,7 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.rank = req.body.rank;
                 vote.save();
             });
         }
