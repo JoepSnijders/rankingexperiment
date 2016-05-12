@@ -103,6 +103,7 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.color = req.body.color;
                 vote.rank = req.body.rank;
                 vote.save();
             });
@@ -131,6 +132,7 @@ router.route('/lightsettings/:id/upvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.color = req.body.color;
                 vote.rank = req.body.rank;
                 vote.save();
             });
@@ -165,6 +167,7 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.color = req.body.color;
                 vote.rank = req.body.rank;
                 vote.save();
             });
@@ -194,6 +197,7 @@ router.route('/lightsettings/:id/downvote?')
                 vote.currentCalculated = setting.calculated;
                 vote.participant = req.body.participant;
                 vote.condition = req.body.condition;
+                vote.color = req.body.color;
                 vote.rank = req.body.rank;
                 vote.save();
             });

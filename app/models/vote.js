@@ -28,6 +28,7 @@ var VoteSchema   = new Schema({
       type: Date,
       default: Date.now
     },
+    color: String,
     rank: Number
 });
 
