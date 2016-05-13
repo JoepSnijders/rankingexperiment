@@ -113,7 +113,6 @@ router.route('/lightsettings/:id/upvote?')
                   vote.currentDownvotes = setting.downvotes;
                   vote.currentCalculated = setting.calculated;
                   vote.currentTotalCalculated = currentCalculated;
-                  console.log('Type: ' + vote.type);
                   console.log('Calculated: ' + vote.currentTotalCalculated);
                   vote.currentTotalUpvotes = currentUpvotes;
                   console.log('Upvotes: ' + vote.currentTotalUpvotes);
@@ -144,36 +143,17 @@ router.route('/lightsettings/:id/upvote?')
                         id: req.params.id
                     });
                 });
-                // Get total calculated
-                var currentCalculated = 0;
-                var currentUpvotes = 0;
-                var currentDownvotes = 0;
-                // Search Light Settings
-                Lightsetting.find({}, function(err, lightsettings) {
-                  _.map(lightsettings, function(key, num){
-                    currentCalculated = currentCalculated + key.calculated;
-                    currentUpvotes = currentUpvotes + key.upvotes;
-                    currentDownvotes = currentDownvotes + key.downvotes;
-                  });
-                  var vote = new Vote();
-                  vote.lightSetting = setting._id;
-                  vote.type = "Upvote";
-                  vote.currentUpvotes = setting.upvotes;
-                  vote.currentDownvotes = setting.downvotes;
-                  vote.currentCalculated = setting.calculated;
-                  vote.currentTotalCalculated = currentCalculated;
-                  console.log('Type: ' + vote.type);
-                  console.log('Calculated: ' + vote.currentTotalCalculated);
-                  vote.currentTotalUpvotes = currentUpvotes;
-                  console.log('Upvotes: ' + vote.currentTotalUpvotes);
-                  vote.currentTotalDownvotes = currentDownvotes;
-                  console.log('Downvotes: ' + vote.currentTotalDownvotes);
-                  vote.participant = req.body.participant;
-                  vote.condition = req.body.condition;
-                  vote.color = req.body.color;
-                  vote.rank = req.body.rank;
-                  vote.save();
-                });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Upvote";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
+                vote.color = req.body.color;
+                vote.rank = req.body.rank;
+                vote.save();
             });
         }
     });
@@ -198,36 +178,17 @@ router.route('/lightsettings/:id/downvote?')
                         id: req.params.id
                     });
                 });
-                // Get total calculated
-                var currentCalculated = 0;
-                var currentUpvotes = 0;
-                var currentDownvotes = 0;
-                // Search Light Settings
-                Lightsetting.find({}, function(err, lightsettings) {
-                  _.map(lightsettings, function(key, num){
-                    currentCalculated = currentCalculated + key.calculated;
-                    currentUpvotes = currentUpvotes + key.upvotes;
-                    currentDownvotes = currentDownvotes + key.downvotes;
-                  });
-                  var vote = new Vote();
-                  vote.lightSetting = setting._id;
-                  vote.type = "Downvote Removed";
-                  vote.currentUpvotes = setting.upvotes;
-                  vote.currentDownvotes = setting.downvotes;
-                  vote.currentCalculated = setting.calculated;
-                  vote.currentTotalCalculated = currentCalculated;
-                  console.log('Type: ' + vote.type);
-                  console.log('Calculated: ' + vote.currentTotalCalculated);
-                  vote.currentTotalUpvotes = currentUpvotes;
-                  console.log('Upvotes: ' + vote.currentTotalUpvotes);
-                  vote.currentTotalDownvotes = currentDownvotes;
-                  console.log('Downvotes: ' + vote.currentTotalDownvotes);
-                  vote.participant = req.body.participant;
-                  vote.condition = req.body.condition;
-                  vote.color = req.body.color;
-                  vote.rank = req.body.rank;
-                  vote.save();
-                });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Downvote Removed";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
+                vote.color = req.body.color;
+                vote.rank = req.body.rank;
+                vote.save();
             });
         } else {
             // Downvoted
@@ -247,36 +208,17 @@ router.route('/lightsettings/:id/downvote?')
                         id: req.params.id
                     });
                 });
-                // Get total calculated
-                var currentCalculated = 0;
-                var currentUpvotes = 0;
-                var currentDownvotes = 0;
-                // Search Light Settings
-                Lightsetting.find({}, function(err, lightsettings) {
-                  _.map(lightsettings, function(key, num){
-                    currentCalculated = currentCalculated + key.calculated;
-                    currentUpvotes = currentUpvotes + key.upvotes;
-                    currentDownvotes = currentDownvotes + key.downvotes;
-                  });
-                  var vote = new Vote();
-                  vote.lightSetting = setting._id;
-                  vote.type = "Downvote";
-                  vote.currentUpvotes = setting.upvotes;
-                  vote.currentDownvotes = setting.downvotes;
-                  vote.currentCalculated = setting.calculated;
-                  vote.currentTotalCalculated = currentCalculated;
-                  console.log('Type: ' + vote.type);
-                  console.log('Calculated: ' + vote.currentTotalCalculated);
-                  vote.currentTotalUpvotes = currentUpvotes;
-                  console.log('Upvotes: ' + vote.currentTotalUpvotes);
-                  vote.currentTotalDownvotes = currentDownvotes;
-                  console.log('Downvotes: ' + vote.currentTotalDownvotes);
-                  vote.participant = req.body.participant;
-                  vote.condition = req.body.condition;
-                  vote.color = req.body.color;
-                  vote.rank = req.body.rank;
-                  vote.save();
-                });
+                var vote = new Vote();
+                vote.lightSetting = setting._id;
+                vote.type = "Downvote";
+                vote.currentUpvotes = setting.upvotes;
+                vote.currentDownvotes = setting.downvotes;
+                vote.currentCalculated = setting.calculated;
+                vote.participant = req.body.participant;
+                vote.condition = req.body.condition;
+                vote.color = req.body.color;
+                vote.rank = req.body.rank;
+                vote.save();
             });
         }
     });

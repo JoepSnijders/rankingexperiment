@@ -19,6 +19,18 @@ var VoteSchema   = new Schema({
       type: Number,
       default: 0
     },
+    currentTotalCalculated: {
+      type: Number,
+      default: 9999
+    },
+    currentTotalUpvotes: {
+      type: Number,
+      default: 9999
+    },
+    currentTotalDownvotes: {
+      type: Number,
+      default: 9999
+    },
     participant: {
       type: Number,
       default: 9999
